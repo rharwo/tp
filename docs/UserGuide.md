@@ -43,8 +43,8 @@ and use the `java -jar Wiagi.java.jar` command to run the application.
 > can be used as `add spending 4 dinner`.
 >  
 > - Items in square brackets are optional. <br>
-> e.g. `add spending {$AMOUNT} {$DESCRIPTION} [/$DATE]` can be used as 
-> `add spending 4 lunch` or `add spending 4 lunch /2024-10-20`.
+> e.g. `add spending {$AMOUNT} {$DESCRIPTION} [/$DATE/]` can be used as 
+> `add spending 4 lunch` or `add spending 4 lunch /2024-10-20/`.
 
 ### Login
 #### Creation of new user:
@@ -57,7 +57,6 @@ Expected display for first time users:
 	Please enter your new account password:
 ```
 Expected output after successfully creating password: <br>
-Note that this is also the startup page for returning users
 ```
 	____________________________________________________________
 	Hello from
@@ -70,6 +69,7 @@ Note that this is also the startup page for returning users
 	____________________________________________________________
 	Please Enter Login Credentials:
 ```
+*Note that this is also the startup page for returning existing users
 ### Adding an entry
 #### Adding a spending:
 
@@ -78,10 +78,10 @@ Run the [`list spendings`](#listing-all-spendings) command to display the list w
 
 
 **Format:** `add spending {$AMOUNT} {$DESCRIPTION} [/$DATE/] [*$TAG*] [~$FREQUENCY~]`
-- `{$AMOUNT}`: Numerical value of the spending.
+- `{$AMOUNT}`: Numerical value of the spending, up to 2 decimal places will be taken.
 - `{$DESCRIPTION}`: Name of the spending.
 - `[/$DATE/]`: Date of the transaction.
-  - Must be of YYYY-MM-DD format.
+  - Must be of YYYY-MM-DD format, eg.`2023-01-21`.
   - If left empty, it would be set to the date of entry.
   - Enclosed in forward slashes.
 - `[*$TAG*]`: Label for the entry.
@@ -90,24 +90,14 @@ Run the [`list spendings`](#listing-all-spendings) command to display the list w
   - Enclosed in tilde.
   - Possible options: `daily`, `monthly` and `yearly`
 
-**Example input:** <br>
-`add spending 100 telegram premium`
+**Example inputs:** <br>
+- `add spending 100 telegram premium` </br>
+- `add spending 100 telegram premium /2024-10-20/` </br>
+- `add spending 100 telegram premium *personal expense*` </br>
+- `add spending 100 telegram premium /2024-10-20/ *personal expense*` </br>
+- `add spending 100 telegram premium /2024-10-20/ *personal expense* ~monthly~` </br>
 
-**Example input:** <br>
-`add spending 100 telegram premium /2024-10-20/`
-
-**Example input:** <br>
-`add spending 100 telegram premium *personal expense*`
-
-**Example input:** <br>
-`add spending 100 telegram premium /2024-10-20/ *personal expense*`
-
-**Example input:** <br>
-`add spending 100 telegram premium /2024-10-20/ *personal expense* ~monthly~`
-
-
-
-**Example output:**
+**Expected output:**
 ```
 	____________________________________________________________
 	Entry successfully added!
@@ -120,10 +110,10 @@ Adds an entry into user income list. Entry will be displayed at the latest index
 Run the [`list incomes`](#listing-all-incomes) command to display the list with the new entry. <br>
 
 **Format:** `add income {$AMOUNT} {$DESCRIPTION} [/$DATE/] [*$TAG*] [~$FREQUENCY~]`
-- `{$AMOUNT}`: Numerical value of the income.
+- `{$AMOUNT}`: Numerical value of the income, up to 2 decimal places will be taken.
 - `{$DESCRIPTION}`: Name of the income.
 - `[/$DATE/]`: Date of the transaction.
-  - Must be of YYYY-MM-DD format.
+  - Must be of YYYY-MM-DD format, eg.`2023-01-21`.
   - If left empty, it would be set to the date of entry.
   - Enclosed in forward slashes.
 - `[*$TAG*]`: Label for the entry.
@@ -133,23 +123,14 @@ Run the [`list incomes`](#listing-all-incomes) command to display the list with 
   - Possible options: `daily`, `monthly` and `yearly`
 
 **Example input:** <br>
-`add income 10000 commission`
+- `add income 10000 commission` </br>
+- `add income 10000 commission /2024-01-01/` </br>
+- `add income 10000 commission *bonus*` </br>
+- `add income 10000 commission /2024-01-01/ *bonus*` </br>
+- `add income 10000 commission /2024-01-01/ *bonus* ~yearly~` </br>
 
-**Example input:** <br>
-`add income 10000 commission /2024-01-01/`
-
-**Example input:** <br>
-`add income 10000 commission *bonus*`
-
-**Example input:** <br>
-`add income 10000 commission /2024-01-01/ *bonus*`
-
-**Example input:** <br>
-`add income 10000 commission /2024-01-01/ *bonus* ~yearly~`
-
-**Example output:**
+**Expected output:**
 ```
-output
 	____________________________________________________________
 	Entry successfully added!
 	____________________________________________________________
@@ -157,13 +138,13 @@ output
 
 ### Listing all entries:
 
-Lists all the entries in the user's spending or income list.
+Lists all the entries in the user's spending or income list. </br>
 **Format:** `list`
 
 **Example input:** <br>
 `list`
 
-**Example output:**
+**Example output:** {to update}
 ```
 	____________________________________________________________
 	Spendings
@@ -406,6 +387,43 @@ The `bye` command allows you to exit the program safely, as it will store all ch
 	____________________________________________________________
 ```
 
+### Saving the data 
+All data previously inputted into the programme will be automatically saved upon the user exiting via the `bye` command.
+There is no need to save manually.
+
+### Editing the data file
+> <span style="color:#f5220d">WARNING</span> </br>
+> This section is dedicated to advanced users who are confident in updating the data file manually. Failure 
+> to do so correctly can lead to data corruption and having possibly all previous information wiped out. </br>
+
+User data is stored into 3 text files, namely
+- password.txt: `[JARFILE LOCATION]/password.txt`, stores the user password
+- spendings.txt: `[JARFILE LOCATION]/spendings.txt`, stores all the user spending data
+- incomes.txt: `[JARFILE LOCATION}/incomes.txt`, stores all the user income data
+
+#### Format of data storage for password:
+For security purposes the method of storage will not be discussed. <span style="color:#f5220d">DO NOT</span> 
+alter this file, simply delete the file if you have forgotten you password and create a new password upon being 
+prompt when start up.
+
+#### Format of data storage for income and spending:
+Data are stored with `|` used as delimiter. Each line in the text file represents one entry. </br>
+Format: 
+`[$AMOUNT]|[$DESCRIPTION]|[$DATE_OF_ENTRY]|[TAG_NAME]|[RECURRENCE_FREQUENCY]|[LAST_RECURRENCE]|[DAY_OF_RECURRENCE]`
+</br>
+</br>
+For spending.txt, the first line of entry stores the budgets of the user.</br>
+Format: `[$DAILY_BUDGET]|[$MONTLY_BUDGET]|[$YEARLY_BUDGET]` </br>
+</br>
+Important data representation to note:
+- `[$AMOUNT]`/`[$DAILY_BUDGET]`/`[$MONTHLY_BUDGET]`/`[$YEARLY_BUDGET]`: In 2 decimal places
+- `[$DATE_OF_ENTRY]`: In the format of `YYYY-MM-DD`
+- `[$RECURRENCE_FREQUENCY]`: In the format of `NONE`/`DAILY`/`MONTHLY`/`YEARLY`
+- `[$DAY_OF_RECURRENCE]`: To match the day stored in `[$DATE_OF_ENTRY]`
+
+We recommend not to edit `[$LAST_RECURRENCE]`. If manually adding new entries with recurrence, `[$LAST_RECURRENCE]`
+should match `[$DATE_OF_ENTRY]`, "null" otherwise.
+
 ## FAQ
 
 **Q**: How do I transfer my data to another computer? 
@@ -413,6 +431,66 @@ The `bye` command allows you to exit the program safely, as it will store all ch
 **A**: Simply transfer `incomes.txt`, `spendings.txt` and `password.txt` files to the folder that the program is at.
 
 ## Command Summary
+<table>
+    <thead>
+        <tr>
+            <th colspan="2">Command</th>
+            <th>Format</th>
+            <th>Examples</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="2">Adding</td>
+            <td>Income</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Spending</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td rowspan="4">Listing entries</td>
+            <td>All spendings</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>All incomes</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>All tags</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>All of a specific tag</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td rowspan="2">Deleting entries</td>
+            <td>Income</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Spending</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td rowspan="3">Setting budget</td>
+            <td>Daily</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Monthly</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Yearly</td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+
 
 [//]: # ({Give a 'cheat sheet' of commands here})
 [//]: # (* Add todo `todo n/TODO_NAME d/DEADLINE`)
